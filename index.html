@@ -23,15 +23,27 @@
     </style>
     <script>
       // Fallback in case of script loading failures on GitHub Pages
-      window.addEventListener('error', function (e) {
+      function showScriptError(msg) {
         var loader = document.getElementById('initial-loader');
         if (loader) {
-          loader.innerHTML = '<div style="max-width:380px; margin:0 auto; padding:24px; background:#161222; border:1px solid rgba(244,63,94,0.4); border-radius:16px; text-align:center;">' +
-            '<div style="font-size:18px; font-weight:bold; color:#fda4af; margin-bottom:8px;">Failed to load assets</div>' +
-            '<p style="font-size:12px; color:#a1a1aa; line-height:1.5; margin-bottom:16px;">Please ensure your GitHub Pages Source is set to <strong>GitHub Actions</strong> in repository settings.</p>' +
+          loader.innerHTML = '<div style="max-width:400px; margin:0 auto; padding:24px; background:#161222; border:1px solid rgba(244,63,94,0.4); border-radius:16px; text-align:center;">' +
+            '<div style="font-size:18px; font-weight:bold; color:#fda4af; margin-bottom:8px;">App Loading Failed</div>' +
+            '<p style="font-size:12px; color:#a1a1aa; line-height:1.5; margin-bottom:16px;">' +
+            (msg || 'The compiled bundle could not be loaded. Please ensure the GitHub Actions build completed.') +
+            '</p>' +
             '<button onclick="location.reload()" style="padding:8px 20px; background:#e11d48; color:#fff; border:none; border-radius:10px; cursor:pointer; font-size:12px; font-weight:600;">Reload App</button>' +
             '</div>';
         }
+      }
+
+      window.addEventListener('error', function (e) {
+        if (e && e.target && (e.target.tagName === 'SCRIPT' || e.target.tagName === 'LINK')) {
+          showScriptError('Failed to load JavaScript bundle (' + (e.target.src || 'script') + ').');
+        }
+      }, true);
+
+      window.addEventListener('unhandledrejection', function (e) {
+        showScriptError(e.reason && e.reason.message ? e.reason.message : 'Application initialization rejected.');
       });
     </script>
   </head>
