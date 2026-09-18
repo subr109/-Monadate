@@ -260,7 +260,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   // Favorites
   const [favorites, setFavorites] = useState<string[]>(() => {
     const saved = localStorage.getItem('mona_favorites');
-    return saved ? JSON.parse(saved) : ['char_f_1', 'char_m_1'];
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) return parsed;
+      } catch (e) {
+        // fall through
+      }
+    }
+    return ['char_f_1', 'char_m_1'];
   });
 
   // Conversations (companionId -> messages)
@@ -402,38 +410,50 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   // Admin reports & audit logs
   const [reports, setReports] = useState<Report[]>(() => {
     const saved = localStorage.getItem('mona_reports');
-    return saved
-      ? JSON.parse(saved)
-      : [
-          {
-            id: 'rep_1',
-            reporterId: 'user_test_99',
-            reporterEmail: 'tester@example.com',
-            targetType: 'technical',
-            targetId: 'chat_settings',
-            reason: 'Technical Issue',
-            description: 'Notification preference resets on reload.',
-            status: 'pending',
-            createdAt: '2026-03-01'
-          }
-        ];
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) return parsed;
+      } catch (e) {
+        // fall through
+      }
+    }
+    return [
+      {
+        id: 'rep_1',
+        reporterId: 'user_test_99',
+        reporterEmail: 'tester@example.com',
+        targetType: 'technical',
+        targetId: 'chat_settings',
+        reason: 'Technical Issue',
+        description: 'Notification preference resets on reload.',
+        status: 'pending',
+        createdAt: '2026-03-01'
+      }
+    ];
   });
 
   const [auditLogs, setAuditLogs] = useState<AuditLog[]>(() => {
     const saved = localStorage.getItem('mona_audit_logs');
-    return saved
-      ? JSON.parse(saved)
-      : [
-          {
-            id: 'log_1',
-            adminId: 'admin_mona_001',
-            adminEmail: 'admin@mona.ai',
-            action: 'INITIALIZE_SYSTEM',
-            targetType: 'system',
-            targetId: 'all_companions',
-            timestamp: new Date().toISOString()
-          }
-        ];
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) return parsed;
+      } catch (e) {
+        // fall through
+      }
+    }
+    return [
+      {
+        id: 'log_1',
+        adminId: 'admin_mona_001',
+        adminEmail: 'admin@mona.ai',
+        action: 'INITIALIZE_SYSTEM',
+        targetType: 'system',
+        targetId: 'all_companions',
+        timestamp: new Date().toISOString()
+      }
+    ];
   });
 
   // UI Modals
