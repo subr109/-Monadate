@@ -4,15 +4,24 @@ import path from 'path';
 import {defineConfig} from 'vite';
 
 export default defineConfig(() => {
-  // Supports GitHub Pages subpaths (via BASE_PATH env var or default relative './')
-  const base = process.env.BASE_PATH || './';
+  // Determine correct base URL:
+  // 1. Explicit BASE_PATH (e.g. from environment or CI)
+  // 2. Auto-detect from GitHub Actions GITHUB_REPOSITORY (e.g. 'owner/repo' -> '/repo/')
+  // 3. Fallback to './' for local and relative preview
+  let base = process.env.BASE_PATH || './';
+  if (process.env.GITHUB_REPOSITORY && !process.env.BASE_PATH) {
+    const repoName = process.env.GITHUB_REPOSITORY.split('/')[1];
+    if (repoName) {
+      base = repoName.endsWith('.github.io') ? '/' : `/${repoName}/`;
+    }
+  }
 
   return {
     base,
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {
-        '@': path.resolve(__dirname, '.'),
+        '@': path.resolve(process.cwd(), '.'),
       },
     },
     server: {

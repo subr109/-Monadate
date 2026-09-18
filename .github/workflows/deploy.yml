@@ -33,6 +33,7 @@ jobs:
         run: npx vite build
         env:
           NODE_ENV: production
+          GITHUB_REPOSITORY: ${{ github.repository }}
 
       - name: Prevent Jekyll from ignoring files
         run: touch dist/.nojekyll
